@@ -3,6 +3,7 @@
 // extra dependencies required:   npm test
 import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
+import './setup.js';
 import { createApp } from '../src/app.js';
 
 const server = createApp().listen(0);

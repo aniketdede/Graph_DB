@@ -145,7 +145,7 @@ npm run dev          # API on :4000 (demo mode) + UI on :3000, one command
 ### 1. Create a CognoDB instance
 1. Sign up at **https://console.cognodb.com/signup** (free tier, no card).
 2. Create a free **c0** instance and pick a region (provisions in <1 min).
-3. Copy the connection URI (`bolt+s://<instance-id>.databases.cognodb.cloud`) and the one-time password for user `cognodb`.
+3. Copy the connection URI (`bolt+s://<instance-id>.<region>.databases.cognodb.com`) and the one-time password for user `cognodb`.
 
 ### 2. Configure & seed
 ```bash
@@ -167,8 +167,33 @@ Open http://localhost:3000.
 
 ### Tests
 ```bash
-npm test                    # 12 API contract tests (demo mode — no database required)
+npm test                    # 12 API contract tests (hermetic demo mode — no database needed)
 ```
+Also wired to GitHub Actions (`.github/workflows/ci.yml`): tests + client build on every push, Node 18/20/22.
+
+### Production mode (single service)
+```bash
+npm run build               # builds the React client → client/dist
+npm start                   # Express serves UI + API on :4000
+```
+
+## Deployment (hosted demo — free tier)
+
+A [`render.yaml`](./render.yaml) Blueprint deploys the whole app as **one free Render web service**: the
+Express API (connected to CognoDB), the seeded graph, and the built React client on the same origin —
+no CORS or proxy setup needed. The seed script is idempotent and runs as part of the start command,
+so every deploy re-seeds the graph if it was ever emptied.
+
+1. Push this repo to GitHub, then in Render: **New → Blueprint** → select the repo.
+2. When prompted, fill the two `sync: false` secrets — they are stored in Render only, never in the repo:
+   - `COGNODB_URI` = `bolt+s://<your-instance>.<region>.databases.cognodb.com`
+   - `COGNODB_PASSWORD` = your one-time CognoDB password
+3. Apply. First deploy ≈ 2 minutes → your app is live at `https://<service>.onrender.com`
+   (the header pill should read **Live · CognoDB Graph · 61 nodes**).
+
+## Screenshots
+
+_Add screenshots of Plan Journey, Reachability, and Insights here before submission._
 
 ### Graceful degradation
 - **No credentials configured** → the API boots in clearly-labelled **demo mode** (same endpoints served from the in-memory seed dataset), and the header shows an amber "Demo data" pill.
