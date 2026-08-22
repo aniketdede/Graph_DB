@@ -4,7 +4,7 @@ A multi-modal **route finder for Pune's Metro + PMPML bus network**, backed by *
 
 > **Wexa AI — Take-Home Assignment 2** · Build a Graph Database Application on CognoDB
 
-**Live demo:** https://puneroutes.onrender.com/ · **Screen recording:** _<add link>_
+**Live demo:** https://puneroutes.onrender.com/ · **Screen recording:** https://www.loom.com/share/380ac98b33674673a2f2ed68f4f0acbb
 
 ---
 
