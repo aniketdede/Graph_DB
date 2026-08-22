@@ -9,7 +9,7 @@ services:
     plan: free
     region: singapore # closest to CognoDB's "bravo" region (change if you like)
     buildCommand: npm ci && npm run build --workspace puneroutes-client
-    startCommand: npm run seed --workspace puneroutes-server && node server/src/index.js
+    startCommand: (npm run seed --workspace puneroutes-server || echo "seed skipped") && node server/src/index.js
     healthCheckPath: /api/health
     envVars:
       - key: COGNODB_URI # entered in Render dashboard — never committed
