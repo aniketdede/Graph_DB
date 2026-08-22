@@ -183,10 +183,7 @@ npm test                    # 12 API contract tests (demo mode — no database r
 | `GET /api/stations/:id/nearby?hops=N` | Stations within N hops (1–5) |
 | `GET /api/stations` · `/api/lines` · `/api/interchanges` · `/api/landmarks` · `/api/stats` | Network data |
 
-## Screenshots
 
-_Add screenshots of Plan Journey, Explore Network, and Insights here before submission._
 
 ---
-
-Built for the Wexa AI CognoDB assignment. Stack: **CognoDB · Express · React · Node** (official `neo4j-driver`, Bolt 5.x, openCypher).
+ Stack: **CognoDB · Express · React · Node** (official `neo4j-driver`, Bolt 5.x, openCypher).
