@@ -195,7 +195,29 @@ so every deploy re-seeds the graph if it was ever emptied.
 
 ## Screenshots
 
-_Add screenshots of Plan Journey, Reachability, and Insights here before submission._
+Screenshots : 
+<img width="1912" height="883" alt="Screenshot 2026-08-22 114538" src="https://github.com/user-attachments/assets/c946426b-17cb-4108-b5d0-804ca04a73ce" />
+
+<br>
+
+<img width="1891" height="870" alt="Screenshot 2026-08-22 114725" src="https://github.com/user-attachments/assets/4a1da351-e955-44da-ac2a-64b5e385dd6e" />
+
+<br>
+
+<img width="1896" height="877" alt="Screenshot 2026-08-22 114622" src="https://github.com/user-attachments/assets/c3c73938-335b-4bc9-9729-ac0b85cf0f7c" />
+
+<br>
+
+<img width="1879" height="865" alt="Screenshot 2026-08-22 114558" src="https://github.com/user-attachments/assets/20440136-fb4c-4fdf-944c-cd72ca8c18e2" />
+
+<br>
+
+<img width="1893" height="861" alt="Screenshot 2026-08-22 114504" src="https://github.com/user-attachments/assets/e462e0b7-d228-4368-9f6a-f2819c9a85e1" />
+
+<br>
+
+<img width="1894" height="875" alt="Screenshot 2026-08-22 114431" src="https://github.com/user-attachments/assets/7d512940-2d63-4bdb-ac50-02f5229a8c99" />
+<br>
 
 ### Graceful degradation
 - **No credentials configured** → the API boots in clearly-labelled **demo mode** (same endpoints served from the in-memory seed dataset), and the header shows an amber "Demo data" pill.
@@ -210,18 +232,7 @@ _Add screenshots of Plan Journey, Reachability, and Insights here before submiss
 | `GET /api/stations/:id/nearby?hops=N` | Stations within N hops (1–5) |
 | `GET /api/stations` · `/api/lines` · `/api/interchanges` · `/api/landmarks` · `/api/stats` | Network data |
 
-Screenshots :
-<img width="1912" height="883" alt="Screenshot 2026-08-22 114538" src="https://github.com/user-attachments/assets/c946426b-17cb-4108-b5d0-804ca04a73ce" />
 
-<img width="1891" height="870" alt="Screenshot 2026-08-22 114725" src="https://github.com/user-attachments/assets/4a1da351-e955-44da-ac2a-64b5e385dd6e" />
-
-<img width="1896" height="877" alt="Screenshot 2026-08-22 114622" src="https://github.com/user-attachments/assets/c3c73938-335b-4bc9-9729-ac0b85cf0f7c" />
-
-<img width="1879" height="865" alt="Screenshot 2026-08-22 114558" src="https://github.com/user-attachments/assets/20440136-fb4c-4fdf-944c-cd72ca8c18e2" />
-
-<img width="1893" height="861" alt="Screenshot 2026-08-22 114504" src="https://github.com/user-attachments/assets/e462e0b7-d228-4368-9f6a-f2819c9a85e1" />
-
-<img width="1894" height="875" alt="Screenshot 2026-08-22 114431" src="https://github.com/user-attachments/assets/7d512940-2d63-4bdb-ac50-02f5229a8c99" />
 
 
 
