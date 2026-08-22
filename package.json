@@ -1,0 +1,23 @@
+{
+  "name": "puneroutes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PuneRoutes — Pune transit route finder on CognoDB (Express API + React client, npm-workspaces monorepo)",
+  "type": "module",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:server": "npm run dev --workspace puneroutes-server",
+    "dev:client": "npm run dev --workspace puneroutes-client",
+    "start": "npm start --workspace puneroutes-server",
+    "seed": "npm run seed --workspace puneroutes-server",
+    "test": "npm test --workspace puneroutes-server",
+    "build": "npm run build --workspace puneroutes-client"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}
