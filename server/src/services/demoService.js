@@ -30,7 +30,15 @@ const lineRefs = (stationId) =>
   });
 
 export async function health() {
-  return { mode: 'demo', nodes: stations.length + lines.length + landmarks.length, rels: buildEdges().length };
+  // Parity with graphService.health: count every relationship the seed would
+  // create — CONNECTS + ON_LINE + NEAR — not just the segment edges.
+  const onLine = routes.reduce((n, r) => n + r.stops.length, 0);
+  const near = landmarks.reduce((n, lm) => n + lm.near.length, 0);
+  return {
+    mode: 'demo',
+    nodes: stations.length + lines.length + landmarks.length,
+    rels: buildEdges().length + onLine + near,
+  };
 }
 
 export async function listStations() {

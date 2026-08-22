@@ -48,7 +48,7 @@ A transit network **is** a graph — the domain model and the storage model are 
 
 | Element | Meaning |
 |---|---|
-| `(:Station {id, name, zone})` | A metro station or bus stop (44 total) |
+| `(:Station {id, name, zone})` | A metro station or bus stop (43 total) |
 | `(:Line {id, name, mode, color})` | A metro line or bus corridor (2 metro + 4 bus) |
 | `(:Landmark {id, name, category})` | A city landmark (12) |
 | `(:Station)-[:CONNECTS {lineId, timeMin}]->(:Station)` | Adjacent stops on a line, weighted by minutes (traversed undirected) |
@@ -96,11 +96,15 @@ Plus: busiest-hub degree centrality (`stats`), landmark lookups, and line summar
 ## Project structure
 
 ```
-pune-transit-graph/
+puneroutes/
+├── package.json                npm workspaces root — `npm run dev` runs everything
+├── scripts/dev.mjs             zero-dependency runner: API + UI together, Ctrl-C stops both
 ├── server/                     Express API (Node, ES modules)
 │   ├── src/
-│   │   ├── index.js            entry point
+│   │   ├── index.js            entry point: listen + graceful shutdown
+│   │   ├── app.js              Express app factory (importable by tests)
 │   │   ├── config.js           env-driven config
+│   │   ├── middleware/         request logging · JSON 404s
 │   │   ├── db/driver.js        Bolt driver singleton (official neo4j-driver)
 │   │   ├── routes/api.js       REST endpoints + uniform error handling
 │   │   └── services/
@@ -109,6 +113,7 @@ pune-transit-graph/
 │   ├── seed/
 │   │   ├── data.js             the Pune transit dataset
 │   │   └── seed.js             idempotent loader (npm run seed)
+│   ├── tests/api.test.js       API contract tests (node:test, zero deps)
 │   └── .env.example
 └── client/                     React (Vite) SPA
     └── src/
@@ -117,31 +122,80 @@ pune-transit-graph/
         └── components/         JourneyPlanner · ExplorePanel · InsightsPanel · common states
 ```
 
+### Architecture notes
+
+- **Layered server** — `routes` (HTTP concerns: parsing, validation, status codes) → `services` (domain logic) → `db` (driver/session lifecycle). The graph and demo services share one interface, so the data layer swaps without touching a route.
+- **App/listener split** — `app.js` builds the middleware stack; `index.js` owns the port and process lifecycle. Tests import the app directly and listen on an ephemeral port.
+- **Parameterised Cypher only** — every query takes `$params`; no string concatenation anywhere.
+- **Graceful degradation** — no credentials ⇒ demo mode; database down at runtime ⇒ `503` + retryable UI state.
+- **Zero-dependency tests** — `node:test` + the real Express app against the in-memory graph: `npm test` (12 contract tests, no DB needed).
+
 ## Setup & run
+
+```bash
+npm install          # at the repo root — installs both workspaces
+```
+
+### 0. Quick look (no database needed)
+
+```bash
+npm run dev          # API on :4000 (demo mode) + UI on :3000, one command
+```
 
 ### 1. Create a CognoDB instance
 1. Sign up at **https://console.cognodb.com/signup** (free tier, no card).
 2. Create a free **c0** instance and pick a region (provisions in <1 min).
-3. Copy the connection URI (`bolt+s://<instance-id>.databases.cognodb.cloud`) and the one-time password for user `cognodb`.
+3. Copy the connection URI (`bolt+s://<instance-id>.<region>.databases.cognodb.com`) and the one-time password for user `cognodb`.
 
 ### 2. Configure & seed
 ```bash
 cd server
 cp .env.example .env        # paste your COGNODB_URI and COGNODB_PASSWORD
-npm install
-npm run seed                # loads 62 nodes / ~130 relationships (idempotent)
+cd ..
+npm run seed                # loads 61 nodes / 109 relationships (idempotent)
 ```
 
 ### 3. Run
 ```bash
-# terminal 1 — API on :4000
-cd server && npm start
-
-# terminal 2 — UI on :3000 (proxies /api to the server)
-cd client && npm install && npm run dev
+npm run dev                 # from the repo root — API :4000 + UI :3000 together
+# or individually:
+npm run dev:server          # Express API with --watch
+npm run dev:client          # Vite dev server (proxies /api → :4000)
 ```
 
 Open http://localhost:3000.
+
+### Tests
+```bash
+npm test                    # 12 API contract tests (hermetic demo mode — no database needed)
+```
+Also wired for GitHub Actions: copy [`docs/github-actions-ci.yml`](./docs/github-actions-ci.yml) to
+`.github/workflows/ci.yml` in the repo (one paste in the GitHub UI — *Actions → set up a workflow yourself*)
+to run tests + client build on every push, Node 18/20/22.
+
+### Production mode (single service)
+```bash
+npm run build               # builds the React client → client/dist
+npm start                   # Express serves UI + API on :4000
+```
+
+## Deployment (hosted demo — free tier)
+
+A [`render.yaml`](./render.yaml) Blueprint deploys the whole app as **one free Render web service**: the
+Express API (connected to CognoDB), the seeded graph, and the built React client on the same origin —
+no CORS or proxy setup needed. The seed script is idempotent and runs as part of the start command,
+so every deploy re-seeds the graph if it was ever emptied.
+
+1. Push this repo to GitHub, then in Render: **New → Blueprint** → select the repo.
+2. When prompted, fill the two `sync: false` secrets — they are stored in Render only, never in the repo:
+   - `COGNODB_URI` = `bolt+s://<your-instance>.<region>.databases.cognodb.com`
+   - `COGNODB_PASSWORD` = your one-time CognoDB password
+3. Apply. First deploy ≈ 2 minutes → your app is live at `https://<service>.onrender.com`
+   (the header pill should read **Live · CognoDB Graph · 61 nodes**).
+
+## Screenshots
+
+_Add screenshots of Plan Journey, Reachability, and Insights here before submission._
 
 ### Graceful degradation
 - **No credentials configured** → the API boots in clearly-labelled **demo mode** (same endpoints served from the in-memory seed dataset), and the header shows an amber "Demo data" pill.

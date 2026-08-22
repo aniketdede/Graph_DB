@@ -1,0 +1,22 @@
+# Render Blueprint — deploys PuneRoutes as ONE free web service:
+# Express API + seeded CognoDB connection + the built React client.
+# The two sync:false secrets are entered in the Render dashboard at creation
+# time and never live in this repository.
+services:
+  - type: web
+    name: puneroutes
+    runtime: node
+    plan: free
+    region: singapore # closest to CognoDB's "bravo" region (change if you like)
+    buildCommand: npm ci && npm run build --workspace puneroutes-client
+    startCommand: npm run seed --workspace puneroutes-server && node server/src/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: COGNODB_URI # entered in Render dashboard — never committed
+        sync: false
+      - key: COGNODB_USER
+        value: cognodb
+      - key: COGNODB_PASSWORD # entered in Render dashboard — never committed
+        sync: false
+      - key: NODE_VERSION
+        value: 22.11.0
