@@ -169,7 +169,9 @@ Open http://localhost:3000.
 ```bash
 npm test                    # 12 API contract tests (hermetic demo mode — no database needed)
 ```
-Also wired to GitHub Actions (`.github/workflows/ci.yml`): tests + client build on every push, Node 18/20/22.
+Also wired for GitHub Actions: copy [`docs/github-actions-ci.yml`](./docs/github-actions-ci.yml) to
+`.github/workflows/ci.yml` in the repo (one paste in the GitHub UI — *Actions → set up a workflow yourself*)
+to run tests + client build on every push, Node 18/20/22.
 
 ### Production mode (single service)
 ```bash
