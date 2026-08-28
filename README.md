@@ -22,7 +22,7 @@ PuneRoutes answers:
 
 A transit network **is** a graph — the domain model and the storage model are the same thing:
 
-1. **Route finding is path traversal.** "Fastest route from A to B" is `allShortestPaths((a)-[:CONNECTS*..30]-(b))` — one declarative pattern. In SQL it's a recursive CTE that must accumulate the visited path, guard against cycles, and reconstruct the path row-by-row in application code. Deletion of a single station ("closed station" mode) is a one-line `WHERE NONE(n IN nodes(p) ...)` filter; relationally it invalidates the whole CTE approach.
+1. **Route finding is path traversal.** "Fastest route from A to B" is `MATCH p = (a)-[:CONNECTS*..20]-(b)` — one declarative pattern. In SQL it's a recursive CTE that must accumulate the visited path, guard against cycles, and reconstruct the path row-by-row in application code. Deletion of a single station ("closed station" mode) is a one-line `WHERE NONE(n IN nodes(p) ...)` filter; relationally it invalidates the whole CTE approach.
 2. **Variable-length queries are native.** "Everything within 3 hops" (`[:CONNECTS*..5]` + hop filter) has no fixed number of joins — SQL needs one self-join *per hop* or another recursive CTE.
 3. **Transfers fall out of the path.** Counting line changes is a `reduce` over the relationship sequence of the returned path; SQL has no notion of "the path" to reduce over.
 4. **The model stays honest.** Interchanges (Civil Court), multi-modal stops (Swargate, Shivajinagar, Kalyani Nagar) are just nodes with more edges — no junction-table explosion, no schema migration to add a new mode (add a `Line` node with `mode: 'ferry'` tomorrow and every query still works).
